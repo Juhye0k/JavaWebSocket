@@ -13,21 +13,24 @@ public class TcpIpClient {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             ObjectMapper objectMapper = new ObjectMapper();
 
-            // 사용자 입력 받는 기능
-            // 입력 뒤 서버와 TCP 소켓 연결
+            // 서버 포트 설정
             String serverIp = "127.0.0.1";
             System.out.println("서버에 연결중입니다. 서버 IP : " + serverIp);
 
-            // 소켓을 생성하여 연결을 요청한다.
-            Socket socket = new Socket(serverIp, 7777); // 서버와 소켓 연결
-            // 에코 메세지 입력 전에 에코 메세지에 대한 4가지 옵션 중 하나를 선택하는 기능
-            // 소켓의 입력스트림을 얻는다
+            // 소켓을 생성하여 서버에 연결을 요청한다.
+            Socket socket = new Socket(serverIp, 7777);
+
+            // 서버로부터 데이터를 읽기 위한 스트림 생성
             DataInputStream dis = new DataInputStream(socket.getInputStream());
+            // 서버로부터 데이터를 보내기 위한 스트림 생성
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+
+            // 이름 입력
             System.out.println("이름을 입력해주세요.");
             String name = br.readLine();
 
             while(true){
+                // 에코 입력
                 System.out.println("에코 옵션 (1:일반 에코, 2: 대문자 에코, 3:소문자로 에코, 4:채팅 종료)");
                 String input = br.readLine();
                 int n;
@@ -100,8 +103,6 @@ public class TcpIpClient {
                 System.out.println("After: " + "["+name+"]"+receivedPacket.getMessage());
 
             }
-            // 에코 할 메세지 입력 기능
-            // 에코 할 메세지, 사용자 이름, 에코 옵션을 하나의 패킷으로 전송 기능
         }catch (Exception e){
             e.printStackTrace();
         }

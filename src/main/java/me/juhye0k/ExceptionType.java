@@ -1,6 +1,6 @@
 package me.juhye0k;
 
-public enum ExceptionType {
+public enum ExceptionType {  // 에러 코드 정의 enum
     NEGATIVE_OR_ZERO("401", "0 이하의 정수는 입력할 수 없습니다."),
     NOT_AN_INTEGER("402", "정수가 아닌 실수는 입력할 수 없습니다."),
     EXCEEDS_MAX("403", "5 이상의 정수는 입력할 수 없습니다."),

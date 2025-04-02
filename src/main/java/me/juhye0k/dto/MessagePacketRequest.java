@@ -1,6 +1,6 @@
 package me.juhye0k.dto;
 
-public class MessagePacketRequest {
+public class MessagePacketRequest { // 클라이언트에서 서버로 보내는 패킷
     private String user;
     private int echoOption;
     private String message;
