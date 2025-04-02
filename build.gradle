@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'application'  // gradlew run 명령어 사용하려면 필요
+}
+
+group 'me.juhye0k'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // [1] WebSocket API (javax 버전)
+    implementation 'javax.websocket:javax.websocket-api:1.1'
+
+    // [2] Tyrus 서버/클라이언트 구현체 (1.x는 javax.websocket용)
+    implementation 'org.glassfish.tyrus:tyrus-server:1.18'
+    implementation 'org.glassfish.tyrus:tyrus-container-grizzly-server:1.18'
+    implementation 'org.glassfish.tyrus.bundles:tyrus-standalone-client:1.18'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+}
+
+// main() 메서드가 있는 클래스 지정
+mainClassName = 'me.juhye0k.WebSocketMain'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
