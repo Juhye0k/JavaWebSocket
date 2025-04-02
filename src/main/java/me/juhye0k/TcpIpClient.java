@@ -56,15 +56,19 @@ public class TcpIpClient {
                     }
                 }
 
-                String message="";
-                String sendPacket;
-                switch(n){
+                String message=""; // 사용자가 입력할 메시지
+                String sendPacket; // 서버로 보낼 JSON 패킷
+                switch(n){ // 입력된 에코 옵션에 따라 처리
                     case 1:
                         // 일반 에코 기능
                         System.out.println("메세지 입력:");
+                        // 메시지 입력받기
                         message = br.readLine();
+                        // MessagePacketRequest 객체를 JSON 문자열로 변환
                         sendPacket = objectMapper.writeValueAsString(new MessagePacketRequest(name,n,message));
+                        // 서버로 전송
                         dos.writeUTF(sendPacket);
+                        // 버퍼 비워 즉시 전송
                         dos.flush();
                         break;
                     case 2:
