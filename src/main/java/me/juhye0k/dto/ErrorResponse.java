@@ -1,13 +1,14 @@
 package me.juhye0k.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import me.juhye0k.error.ErrorCode;
 
 public class ErrorResponse {
-    @JsonProperty("errorCode")
-    private String errorCode;
+    @JsonProperty("errorCode") // JSON 직렬화 시 이름 명시적으로 설정
+    private String errorCode; // 에러의 식별 코드
 
     @JsonProperty("errorMessage")
-    private String errorMessage;
+    private String errorMessage; // 상세 메세지
 
     // 기본 생성자 (Jackson이 필요로 함)
     public ErrorResponse() {
@@ -15,9 +16,9 @@ public class ErrorResponse {
         this.errorMessage = null;
     }
 
-    public ErrorResponse(String errorCode, String errorMessage) {
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
+    public ErrorResponse(ErrorCode errorCode) {
+        this.errorCode = errorCode.getCode();
+        this.errorMessage = errorCode.getMessage();
     }
 
     // Getters and Setters

@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.juhye0k.dto.ErrorResponse;
 import me.juhye0k.dto.MessagePacketRequest;
 import me.juhye0k.dto.MessagePacketResponse;
+import me.juhye0k.error.ErrorCode;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -35,7 +36,7 @@ public class TcpIpServer {
 
                 // JSON을 MessagePacketRequest 객체로 변환
                 MessagePacketRequest packet = mapper.readValue(json, MessagePacketRequest.class);
-                MessagePacketResponse response;
+                MessagePacketResponse response = null;
 
                 // 에코 옵션이 4일 경우 종료
                 if (packet.getEchoOption() == 4) {
@@ -52,37 +53,31 @@ public class TcpIpServer {
                         String originalInput = packet.getMessage().equals("error") ? "unknown" : packet.getMessage();
                         try {
                             Double.parseDouble(originalInput); // 실수로 변환 가능한지 체크
-                            response = new MessagePacketResponse(new ErrorResponse("402", "정수가 아닌 실수는 입력할 수 없습니다."));
+                            response = new MessagePacketResponse(new ErrorResponse(ErrorCode.FLOAT_INPUT));
                         } catch (NumberFormatException e) {
-                            response = new MessagePacketResponse(new ErrorResponse("404", "문자는 입력할 수 없습니다."));
+                            response = new MessagePacketResponse(new ErrorResponse(ErrorCode.STRING_INPUT));
                         }
                     }
                     // 0 이하의 정수 입력 오류
                     else if (echoOption <= 0) {
-                        response = new MessagePacketResponse(new ErrorResponse("401", "0 이하의 정수는 입력할 수 없습니다."));
+                        response = new MessagePacketResponse(new ErrorResponse(ErrorCode.NEGATIVE_OR_ZERO));
                     }
                     // 5 이상의 정수 입력 오류
                     else if (echoOption >= 5) {
-                        response = new MessagePacketResponse(new ErrorResponse("403", "5 이상의 정수는 입력할 수 없습니다."));
+                        response = new MessagePacketResponse(new ErrorResponse(ErrorCode.OVER_MAX_OPTION));
+
                     }
                     // 유효한 옵션(1, 2, 3)일 경우 메시지 처리
                     else if (echoOption >= 1 && echoOption <= 3) {
-                        // 메시지가 "error"인 경우 (잘못된 입력)
-                        if (packet.getMessage().equals("error")) {
-                            response = new MessagePacketResponse(new ErrorResponse("405", "유효하지 않은 입력입니다."));
-                        } else {
-                            // 정상적인 메시지 처리
-                            String resultMessage = setMessage(packet.getMessage(), echoOption);
-                            System.out.println("Before: [" + packet.getUser() + "]:" + packet.getMessage());
-                            System.out.println("After: [" + packet.getUser() + "]:" + resultMessage);
-                            response = new MessagePacketResponse(resultMessage);
-                        }
-                    } else {
-                        response = new MessagePacketResponse(new ErrorResponse("406", "유효하지 않은 에코 옵션입니다."));
+                        // 정상적인 메시지 처리
+                        String resultMessage = setMessage(packet.getMessage(), echoOption);
+                        System.out.println("Before: [" + packet.getUser() + "]:" + packet.getMessage());
+                        System.out.println("After: [" + packet.getUser() + "]:" + resultMessage);
+                        response = new MessagePacketResponse(resultMessage);
                     }
                 } catch (Exception e) {
                     // 예외 발생 시 오류 메시지 생성
-                    response = new MessagePacketResponse(new ErrorResponse("500", "서버에서 처리 중 문제가 발생했습니다."));
+                    response = new MessagePacketResponse(new ErrorResponse(ErrorCode.SERVER_ERROR));
                 }
 
                 // 응답 객체를 JSON으로 변환
